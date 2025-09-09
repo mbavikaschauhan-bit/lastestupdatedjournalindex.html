@@ -292,8 +292,9 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 500px;
+            width: 95%;
+            max-width: 600px;
+            min-width: 320px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
             color: #e5e7eb; /* Default text color for dark modal */
@@ -417,13 +418,37 @@
             text-align: left;
             font-size: 0.875rem;
             word-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 20%; } /* Symbol */
-        .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 15%; } /* Side */
-        .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 15%; } /* Size */
-        .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 20%; } /* Entry */
-        .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 20%; } /* Exit */
-        .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 10%; } /* P&L */
+        
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 640px) {
+            .trade-details-modal {
+                width: 98%;
+                max-width: none;
+                margin: 1rem;
+            }
+            
+            .trades-table th, .trades-table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.75rem;
+            }
+            
+            .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 20%; } /* Symbol */
+            .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 10%; } /* Side */
+            .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 10%; } /* Size */
+            .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 20%; } /* Entry */
+            .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 20%; } /* Exit */
+            .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 20%; } /* P&L */
+        }
+        .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 18%; } /* Symbol */
+        .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 12%; } /* Side */
+        .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 12%; } /* Size */
+        .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 18%; } /* Entry */
+        .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 18%; } /* Exit */
+        .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 22%; } /* P&L */
         .trades-table thead {
              border-bottom: 1px solid #334155;
         }
@@ -1483,7 +1508,7 @@
                          <div class="stat-card-icon" style="background-color: rgba(245, 158, 11, 0.2); color: #f59e0b;"><i data-feather="award"></i></div>
                      </div>
                  </div>
-                 <div class="overflow-y-auto max-h-64">
+                 <div class="overflow-y-auto max-h-64 overflow-x-auto">
                     <table class="trades-table">
                         <thead>
                             <tr>
@@ -2832,10 +2857,10 @@
                                     <span style="color: ${sideColor}; font-weight: 500;">${trade.direction || 'N/A'}</span>
                                 </td>
                                 <td class="px-4 py-2">${trade.quantity || 0}</td>
-                                <td class="px-4 py-2">₹${(trade.entry_price || 0).toFixed(2)}</td>
-                                <td class="px-4 py-2">₹${(trade.exit_price || 0).toFixed(2)}</td>
-                                <td class="px-4 py-2" style="color: ${pnlColor}; font-weight: 500;">
-                                    ${pnl >= 0 ? '+' : ''}${formatCurrency(pnl)}
+                                <td class="px-4 py-2" style="text-align: right;">₹${(trade.entry_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
+                                <td class="px-4 py-2" style="text-align: right;">₹${(trade.exit_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
+                                <td class="px-4 py-2" style="color: ${pnlColor}; font-weight: 500; text-align: right;">
+                                    ${pnl >= 0 ? '+' : ''}₹${Math.abs(pnl).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}
                                 </td>
                             </tr>
                         `;
@@ -3353,7 +3378,7 @@
                                         color: 'rgba(128,128,128,0.2)'
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)'
+                                        color: 'var(--text-primary)'
                                     }
                                 },
                                 x: {
@@ -3361,7 +3386,7 @@
                                         color: 'rgba(128,128,128,0.2)'
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)'
+                                        color: 'var(--text-primary)'
                                     }
                                 }
                             }
@@ -3434,7 +3459,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: { size: 11 }
                                     }
                                 },
@@ -3443,7 +3468,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: { size: 11 }
                                     }
                                 }
@@ -3617,7 +3642,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -3629,7 +3654,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         },
@@ -3768,7 +3793,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -3780,7 +3805,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         },
@@ -3893,7 +3918,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: { size: 11 }
                                     }
                                 },
@@ -3905,7 +3930,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: { size: 11 }
                                     }
                                 }
@@ -4017,7 +4042,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4031,7 +4056,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4142,7 +4167,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4156,7 +4181,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4357,7 +4382,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4369,7 +4394,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4464,7 +4489,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         },
@@ -4477,7 +4502,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4496,6 +4521,7 @@
                     }
                     
                     console.log('Creating Daily Win Rate Chart with closedTrades:', closedTrades.length);
+                    console.log('Daily Win Rate Chart canvas found:', dailyWinRateCtx);
                     
                     // Get all unique dates from trades
                     const allDates = new Set();
@@ -4520,6 +4546,7 @@
                     let chartLabels, dailyWinRateData, avgWinRateData, tooltipData;
                     
                     if (sortedDates.length === 0) {
+                        console.log('No trades found, using sample data for Daily Win Rate Chart');
                         // Sample data matching the image
                         chartLabels = [
                             '28-06-2024', '02-07-2024', '09-07-2024', '11-07-2024', '12-07-2024', 
@@ -4558,6 +4585,7 @@
                             { dailyWins: 3, dailyTotal: 4, cumulativeWins: 19, cumulativeTotal: 30 }
                         ];
                     } else {
+                        console.log('Processing actual trade data for Daily Win Rate Chart, sortedDates:', sortedDates);
                         // Calculate actual win rates from trade data
                         chartLabels = sortedDates.map(date => formatDateDDMMYYYY(date));
                         dailyWinRateData = [];
@@ -4605,6 +4633,12 @@
                             });
                         });
                     }
+                    
+                    console.log('Creating Daily Win Rate Chart with data:', {
+                        labels: chartLabels,
+                        dailyWinRateData: dailyWinRateData,
+                        avgWinRateData: avgWinRateData
+                    });
                     
                     const dailyWinRateChart = new Chart(dailyWinRateCtx, {
                         type: 'line',
@@ -4695,7 +4729,7 @@
                                         callback: function(value) {
                                             return value.toFixed(0) + '%';
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4707,7 +4741,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         },
@@ -4736,9 +4770,9 @@
                         }
                     });
                     chartInstances['dailyWinRateChart'] = dailyWinRateChart;
-                    console.log('Daily Win Rate Chart created successfully');
+                    console.log('Daily Win Rate Chart created successfully:', dailyWinRateChart);
                 } else {
-                    console.log('Daily Win Rate Chart canvas not found');
+                    console.log('Daily Win Rate Chart canvas not found - canvas element missing');
                 }
                 
                 // Strategy vs P&L Chart
@@ -4824,7 +4858,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4838,7 +4872,7 @@
                                     ticks: {
                                         maxRotation: 0,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4936,7 +4970,7 @@
                                     display: true,
                                     position: 'top',
                                     labels: {
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 12
                                         }
@@ -4978,7 +5012,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
@@ -4993,7 +5027,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-secondary)',
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 11
                                         }
