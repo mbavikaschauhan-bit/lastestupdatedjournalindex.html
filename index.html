@@ -23,6 +23,7 @@
             --border-color: #dee2e6;
             --shadow: rgba(0, 0, 0, 0.1);
             --accent-color: #007bff;
+            --chart-text: #212529; /* Chart text color for light theme */
         }
 
         [data-theme="dark"] {
@@ -35,6 +36,7 @@
             --border-color: #555555;
             --shadow: rgba(0, 0, 0, 0.3);
             --accent-color: #00d4aa;
+            --chart-text: #ffffff; /* Chart text color for dark theme */
         }
         
         body {
@@ -42,6 +44,16 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             background-color: var(--bg-secondary);
             color: var(--text-primary);
+        }
+
+        /* Chart-specific styles for better theme integration */
+        canvas {
+            transition: filter 0.3s ease;
+        }
+
+        /* Ensure chart tooltips use theme colors */
+        .chartjs-tooltip {
+            color: var(--chart-text) !important;
         }
 
         .btn-primary {
@@ -1804,8 +1816,64 @@
                 textPrimary: isDark ? '#ffffff' : '#212529',
                 textSecondary: isDark ? '#d1d5db' : '#2c333a',
                 textMuted: isDark ? '#d1d5db' : '#3e444a',
-                gridColor: 'rgba(128, 128, 128, 0.1)'
+                gridColor: 'rgba(128, 128, 128, 0.1)',
+                chartText: getComputedStyle(document.documentElement).getPropertyValue('--chart-text').trim()
             };
+        };
+
+        // Update all charts when theme changes
+        const updateChartsOnThemeChange = () => {
+            const colors = getThemeColors();
+            console.log('Updating charts with theme colors:', colors);
+            
+            Object.values(chartInstances).forEach((chart, index) => {
+                if (chart && typeof chart.update === 'function') {
+                    try {
+                        // Update chart options with new theme colors
+                        if (chart.options && chart.options.scales) {
+                            // Update axis text colors
+                            if (chart.options.scales.x && chart.options.scales.x.ticks) {
+                                chart.options.scales.x.ticks.color = colors.chartText;
+                            }
+                            if (chart.options.scales.y && chart.options.scales.y.ticks) {
+                                chart.options.scales.y.ticks.color = colors.chartText;
+                            }
+                        }
+                        
+                        // Update legend colors
+                        if (chart.options && chart.options.plugins && chart.options.plugins.legend) {
+                            if (chart.options.plugins.legend.labels) {
+                                chart.options.plugins.legend.labels.color = colors.chartText;
+                            }
+                        }
+                        
+                        // Update tooltip colors
+                        if (chart.options && chart.options.plugins && chart.options.plugins.tooltip) {
+                            if (chart.options.plugins.tooltip.titleColor) {
+                                chart.options.plugins.tooltip.titleColor = colors.chartText;
+                            }
+                            if (chart.options.plugins.tooltip.bodyColor) {
+                                chart.options.plugins.tooltip.bodyColor = colors.chartText;
+                            }
+                        }
+                        
+                        // Update grid colors
+                        if (chart.options && chart.options.scales) {
+                            if (chart.options.scales.x && chart.options.scales.x.grid) {
+                                chart.options.scales.x.grid.color = colors.gridColor;
+                            }
+                            if (chart.options.scales.y && chart.options.scales.y.grid) {
+                                chart.options.scales.y.grid.color = colors.gridColor;
+                            }
+                        }
+                        
+                        chart.update();
+                        console.log(`Updated chart ${index + 1} successfully`);
+                    } catch (error) {
+                        console.error(`Error updating chart ${index + 1}:`, error);
+                    }
+                }
+            });
         };
 
         // Format amount based on display mode
@@ -1955,6 +2023,10 @@
                 appState.theme = themeToggleInput.checked ? 'dark' : 'light';
                 localStorage.setItem('theme', appState.theme);
                 applyTheme();
+                // Update all charts with new theme colors
+                setTimeout(() => {
+                    updateChartsOnThemeChange();
+                }, 100); // Small delay to ensure theme is applied
             });
         }
         
@@ -3111,7 +3183,16 @@
                                 maintainAspectRatio: false,
                                 cutout: '70%',
                                 plugins: {
-                                    legend: { display: false }
+                                    legend: { 
+                                        display: false 
+                                    },
+                                    tooltip: {
+                                        titleColor: getThemeColors().chartText,
+                                        bodyColor: getThemeColors().chartText,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                                        borderWidth: 1
+                                    }
                                 }
                             }
                         });
@@ -3398,7 +3479,7 @@
                                         color: 'rgba(128, 128, 128, 0.1)'
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary
+                                        color: getThemeColors().chartText
                                     }
                                 },
                                 x: {
@@ -3406,7 +3487,7 @@
                                         color: 'rgba(128, 128, 128, 0.1)'
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary
+                                        color: getThemeColors().chartText
                                     }
                                 }
                             }
@@ -3463,6 +3544,11 @@
                             plugins: {
                                 legend: { display: false },
                                 tooltip: {
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                                    borderWidth: 1,
                                     callbacks: {
                                         label: function(context) {
                                             const value = context.parsed.y;
@@ -3479,7 +3565,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 },
@@ -3488,7 +3574,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 }
@@ -3645,8 +3731,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(59, 130, 246, 1)',
                                     borderWidth: 1,
                                     callbacks: {
@@ -3670,7 +3756,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0});
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         },
@@ -3683,7 +3769,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         },
@@ -3798,8 +3884,8 @@
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(20, 184, 166, 1)',
                                     borderWidth: 1,
                                     callbacks: {
@@ -3823,7 +3909,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -3835,7 +3921,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         },
@@ -3918,8 +4004,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(255, 255, 255, 0.2)',
                                     borderWidth: 1,
                                     callbacks: {
@@ -3948,7 +4034,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 },
@@ -3960,7 +4046,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 }
@@ -4042,8 +4128,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderWidth: 1,
                                     callbacks: {
                                         label: function(context) {
@@ -4072,7 +4158,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4086,7 +4172,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4167,8 +4253,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderWidth: 1,
                                     callbacks: {
                                         label: function(context) {
@@ -4197,7 +4283,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4211,7 +4297,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4259,7 +4345,7 @@
                                         labels: {
                                             usePointStyle: true,
                                             padding: 20,
-                                            color: getThemeColors().textPrimary,
+                                            color: getThemeColors().chartText,
                                             font: {
                                                 size: 12
                                             }
@@ -4296,7 +4382,7 @@
                                         labels: {
                                             usePointStyle: true,
                                             padding: 20,
-                                            color: getThemeColors().textPrimary,
+                                            color: getThemeColors().chartText,
                                             font: {
                                                 size: 12
                                             }
@@ -4392,8 +4478,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderWidth: 1,
                                     callbacks: {
                                         label: function(context) {
@@ -4414,7 +4500,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4426,7 +4512,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4501,8 +4587,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(249, 115, 22, 1)',
                                     borderWidth: 1,
                                     callbacks: {
@@ -4521,7 +4607,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         },
@@ -4534,7 +4620,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4545,7 +4631,7 @@
                     });
                     chartInstances['tradeDistributionChart'] = tradeDistributionChart;
                 }
-                // Daily Win Rate vs Average Win Rate Chart
+                // Daily Win Rate Chart with comprehensive P&L analysis
                 const dailyWinRateCtx = getCtx('dailyWinRateChart');
                 const dailyWinRateMessage = document.getElementById('dailyWinRateMessage');
                 if (dailyWinRateCtx) {
@@ -4560,19 +4646,68 @@
                     }
                     
                     console.log('Creating Daily Win Rate Chart with closedTrades:', closedTrades.length);
-                    console.log('Daily Win Rate Chart canvas found:', dailyWinRateCtx);
+                    
+                    // Function to calculate daily win rate statistics
+                    function calculateDailyWinRateStats(trades, date) {
+                        const dayTrades = trades.filter(trade => {
+                            const tradeDate = trade.exit_date ? new Date(trade.exit_date).toISOString().split('T')[0] : 
+                                             new Date(trade.entry_date).toISOString().split('T')[0];
+                            return tradeDate === date;
+                        });
+                        
+                        let dailyWins = 0;
+                        let dailyLosses = 0;
+                        let dailyBreakeven = 0;
+                        let totalTrades = dayTrades.length;
+                        let totalWinAmount = 0;
+                        let totalLossAmount = 0;
+                        let netPnl = 0;
+                        
+                        dayTrades.forEach(trade => {
+                            const pnl = calculateNetPnl(trade);
+                            netPnl += pnl;
+                            
+                            if (pnl > 0) {
+                                dailyWins++;
+                                totalWinAmount += pnl;
+                            } else if (pnl < 0) {
+                                dailyLosses++;
+                                totalLossAmount += pnl;
+                            } else {
+                                dailyBreakeven++;
+                            }
+                        });
+                        
+                        // Calculate win rate percentage (breakeven excluded)
+                        const dailyRatePct = (dailyWins + dailyLosses) > 0 ? 
+                            (dailyWins / (dailyWins + dailyLosses)) * 100 : 0;
+                        
+                        // Calculate average win/loss sizes
+                        const avgWinSize = dailyWins > 0 ? totalWinAmount / dailyWins : 0;
+                        const avgLossSize = dailyLosses > 0 ? totalLossAmount / dailyLosses : 0;
+                        
+                        return {
+                            date,
+                            dailyWins,
+                            dailyLosses,
+                            dailyBreakeven,
+                            totalTrades,
+                            dailyRatePct,
+                            avgWinSize,
+                            avgLossSize,
+                            netPnl
+                        };
+                    }
                     
                     // Get all unique dates from trades
                     const allDates = new Set();
                     closedTrades.forEach(trade => {
                         if (trade.entry_date) {
-                            // Format date to remove time information
                             const date = new Date(trade.entry_date);
                             const formattedDate = date.toISOString().split('T')[0];
                             allDates.add(formattedDate);
                         }
                         if (trade.exit_date) {
-                            // Format date to remove time information
                             const date = new Date(trade.exit_date);
                             const formattedDate = date.toISOString().split('T')[0];
                             allDates.add(formattedDate);
@@ -4581,80 +4716,75 @@
                     
                     const sortedDates = Array.from(allDates).sort();
                     
-                    // If no trades, create sample data
+                    // If no trades, create comprehensive demo data
                     let chartLabels, dailyWinRateData, tooltipData;
                     
                     if (sortedDates.length === 0) {
-                        console.log('No trades found, using sample data for Daily Win Rate Chart');
-                        // Sample data for daily win rate only
-                        chartLabels = [
-                            '28-06-2024', '02-07-2024', '09-07-2024', '11-07-2024', '12-07-2024', 
-                            '16-07-2024', '18-07-2024', '19-07-2024', '22-07-2024', '29-07-2024',
-                            '30-07-2024', '31-07-2024', '06-08-2024', '07-08-2024', '09-08-2024',
-                            '12-08-2024', '13-08-2024', '14-08-2024', '15-08-2024', '16-08-2024',
-                            '20-08-2024', '21-08-2024', '28-08-2024', '29-08-2024', '30-08-2024'
+                        console.log('No trades found, using comprehensive demo data for Daily Win Rate Chart');
+                        
+                        // Demo dataset with realistic trading scenarios
+                        const demoDates = [
+                            '2024-06-28', '2024-07-02', '2024-07-09', '2024-07-11', '2024-07-12',
+                            '2024-07-16', '2024-07-18', '2024-07-19', '2024-07-22', '2024-07-29',
+                            '2024-07-30', '2024-07-31', '2024-08-06', '2024-08-07', '2024-08-09',
+                            '2024-08-12', '2024-08-13', '2024-08-14', '2024-08-15', '2024-08-16',
+                            '2024-08-20', '2024-08-21', '2024-08-28', '2024-08-29', '2024-08-30'
                         ];
-                        dailyWinRateData = [0, 0, 0, 100, 33.33, 100, 0, 66.67, 100, 0, 0, 0, 0, 50, 0, 66.67, 75, 0, 0, 100, 50, 0, 33.33, 50, 75];
-                        tooltipData = [
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 0, cumulativeTotal: 0 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 0, cumulativeTotal: 0 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 0, cumulativeTotal: 0 },
-                            { dailyWins: 1, dailyTotal: 1, cumulativeWins: 1, cumulativeTotal: 1 },
-                            { dailyWins: 1, dailyTotal: 3, cumulativeWins: 2, cumulativeTotal: 4 },
-                            { dailyWins: 1, dailyTotal: 1, cumulativeWins: 3, cumulativeTotal: 5 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 3, cumulativeTotal: 5 },
-                            { dailyWins: 2, dailyTotal: 3, cumulativeWins: 5, cumulativeTotal: 8 },
-                            { dailyWins: 1, dailyTotal: 1, cumulativeWins: 6, cumulativeTotal: 9 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 6, cumulativeTotal: 9 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 6, cumulativeTotal: 9 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 6, cumulativeTotal: 9 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 6, cumulativeTotal: 9 },
-                            { dailyWins: 1, dailyTotal: 2, cumulativeWins: 7, cumulativeTotal: 11 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 7, cumulativeTotal: 11 },
-                            { dailyWins: 2, dailyTotal: 3, cumulativeWins: 9, cumulativeTotal: 14 },
-                            { dailyWins: 3, dailyTotal: 4, cumulativeWins: 12, cumulativeTotal: 18 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 12, cumulativeTotal: 18 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 12, cumulativeTotal: 18 },
-                            { dailyWins: 1, dailyTotal: 1, cumulativeWins: 13, cumulativeTotal: 19 },
-                            { dailyWins: 1, dailyTotal: 2, cumulativeWins: 14, cumulativeTotal: 21 },
-                            { dailyWins: 0, dailyTotal: 0, cumulativeWins: 14, cumulativeTotal: 21 },
-                            { dailyWins: 1, dailyTotal: 3, cumulativeWins: 15, cumulativeTotal: 24 },
-                            { dailyWins: 1, dailyTotal: 2, cumulativeWins: 16, cumulativeTotal: 26 },
-                            { dailyWins: 3, dailyTotal: 4, cumulativeWins: 19, cumulativeTotal: 30 }
+                        
+                        // Demo statistics for each date
+                        const demoStats = [
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 1, losses: 0, breakeven: 0, total: 1, rate: 100, avgWin: 2500, avgLoss: 0, netPnl: 2500 },
+                            { wins: 1, losses: 2, breakeven: 0, total: 3, rate: 33.33, avgWin: 1800, avgLoss: -1200, netPnl: -600 },
+                            { wins: 1, losses: 0, breakeven: 0, total: 1, rate: 100, avgWin: 3200, avgLoss: 0, netPnl: 3200 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 2, losses: 1, breakeven: 0, total: 3, rate: 66.67, avgWin: 2100, avgLoss: -1500, netPnl: 2700 },
+                            { wins: 1, losses: 0, breakeven: 0, total: 1, rate: 100, avgWin: 2800, avgLoss: 0, netPnl: 2800 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 1, losses: 1, breakeven: 0, total: 2, rate: 50, avgWin: 1900, avgLoss: -1100, netPnl: 800 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 2, losses: 1, breakeven: 0, total: 3, rate: 66.67, avgWin: 2200, avgLoss: -1800, netPnl: 2600 },
+                            { wins: 3, losses: 1, breakeven: 0, total: 4, rate: 75, avgWin: 1950, avgLoss: -1400, netPnl: 4450 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 1, losses: 0, breakeven: 0, total: 1, rate: 100, avgWin: 3100, avgLoss: 0, netPnl: 3100 },
+                            { wins: 1, losses: 1, breakeven: 0, total: 2, rate: 50, avgWin: 2400, avgLoss: -1600, netPnl: 800 },
+                            { wins: 0, losses: 0, breakeven: 0, total: 0, rate: 0, avgWin: 0, avgLoss: 0, netPnl: 0 },
+                            { wins: 1, losses: 2, breakeven: 0, total: 3, rate: 33.33, avgWin: 1700, avgLoss: -1300, netPnl: -900 },
+                            { wins: 1, losses: 1, breakeven: 0, total: 2, rate: 50, avgWin: 2600, avgLoss: -1200, netPnl: 1400 },
+                            { wins: 3, losses: 1, breakeven: 0, total: 4, rate: 75, avgWin: 2100, avgLoss: -1900, netPnl: 4400 }
                         ];
+                        
+                        chartLabels = demoDates.map(date => formatDateDDMMYYYY(date));
+                        dailyWinRateData = demoStats.map(stat => stat.rate);
+                        tooltipData = demoStats.map((stat, index) => ({
+                            date: chartLabels[index],
+                            dailyWins: stat.wins,
+                            dailyLosses: stat.losses,
+                            dailyBreakeven: stat.breakeven,
+                            totalTrades: stat.total,
+                            dailyRatePct: stat.rate,
+                            avgWinSize: stat.avgWin,
+                            avgLossSize: stat.avgLoss,
+                            netPnl: stat.netPnl
+                        }));
                     } else {
-                        console.log('Processing actual trade data for Daily Win Rate Chart, sortedDates:', sortedDates);
-                        // Calculate actual win rates from trade data
+                        console.log('Processing actual trade data for Daily Win Rate Chart');
+                        
+                        // Process actual trade data
                         chartLabels = sortedDates.map(date => formatDateDDMMYYYY(date));
                         dailyWinRateData = [];
                         tooltipData = [];
                         
                         sortedDates.forEach(date => {
-                            // Calculate daily trades for this date
-                            const dailyTrades = closedTrades.filter(trade => {
-                                const tradeDate = trade.exit_date || trade.entry_date;
-                                if (tradeDate) {
-                                    const formattedTradeDate = new Date(tradeDate).toISOString().split('T')[0];
-                                    return formattedTradeDate === date;
-                                }
-                                return false;
-                            });
-                            
-                            const dailyWins = dailyTrades.filter(trade => {
-                                const pnl = calculateNetPnl(trade);
-                                return pnl > 0; // Win if P&L > 0
-                            }).length;
-                            
-                            const dailyTotal = dailyTrades.length;
-                            
-                            // Calculate daily win rate
-                            const dailyWinRate = dailyTotal > 0 ? (dailyWins / dailyTotal) * 100 : 0;
-                            
-                            dailyWinRateData.push(dailyWinRate);
-                            tooltipData.push({
-                                dailyWins,
-                                dailyTotal
-                            });
+                            const stats = calculateDailyWinRateStats(closedTrades, date);
+                            dailyWinRateData.push(stats.dailyRatePct);
+                            tooltipData.push(stats);
                         });
                     }
                     
@@ -4684,7 +4814,7 @@
                                 {
                                     label: 'Daily Win Rate',
                                     data: dailyWinRateData,
-                                    borderColor: 'rgba(59, 130, 246, 1)', // Blue color
+                                    borderColor: 'rgba(59, 130, 246, 1)',
                                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                     borderWidth: 2,
                                     fill: false,
@@ -4705,7 +4835,7 @@
                                     labels: {
                                         usePointStyle: true,
                                         padding: 20,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 12
                                         }
@@ -4713,22 +4843,29 @@
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(255, 255, 255, 0.2)',
                                     borderWidth: 1,
                                     callbacks: {
                                         title: function(context) {
-                                            return `Date: ${context[0].label}`;
+                                            const index = context[0].dataIndex;
+                                            const data = tooltipData[index];
+                                            return `Date: ${data.date}`;
                                         },
                                         label: function(context) {
                                             const index = context.dataIndex;
                                             const data = tooltipData[index];
-                                            
-                                            return [
-                                                `Daily Win Rate: ${context.parsed.y.toFixed(2)}%`,
-                                                `Daily Trades: ${data.dailyWins}/${data.dailyTotal}`
+                                            const lines = [
+                                                `Win Rate: ${data.dailyRatePct.toFixed(2)}%`,
+                                                `Wins/Losses: ${data.dailyWins}/${data.dailyLosses}`,
+                                                `Breakeven: ${data.dailyBreakeven}`,
+                                                `Total Trades: ${data.totalTrades}`,
+                                                `Avg Win: ₹${data.avgWinSize.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
+                                                `Avg Loss: ₹${data.avgLossSize.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
+                                                `Net P&L: ₹${data.netPnl.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`
                                             ];
+                                            return lines;
                                         }
                                     }
                                 }
@@ -4737,40 +4874,31 @@
                                 y: {
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: { 
-                                        color: 'rgba(128, 128, 128, 0.1)',
-                                        drawBorder: false
-                                    },
                                     ticks: {
                                         callback: function(value) {
-                                            return value.toFixed(0) + '%';
+                                            return value + '%';
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
+                                    },
+                                    grid: {
+                                        color: 'rgba(128, 128, 128, 0.1)'
                                     }
                                 },
                                 x: {
-                                    grid: { 
-                                        color: 'rgba(128, 128, 128, 0.1)',
-                                        drawBorder: false
-                                    },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         },
-                                        maxRotation: 45,
-                                        minRotation: 0,
                                         callback: function(value, index, ticks) {
                                             const label = this.getLabelForValue(value);
                                             if (label) {
-                                                // If label is already in DD-MM-YYYY format, return as is
                                                 if (label.includes('-') && label.split('-').length === 3) {
                                                     return label;
                                                 }
-                                                // Otherwise, format date
                                                 const date = new Date(label);
                                                 return date.toLocaleDateString('en-IN', { 
                                                     day: '2-digit', 
@@ -4780,6 +4908,9 @@
                                             }
                                             return label;
                                         }
+                                    },
+                                    grid: {
+                                        color: 'rgba(128, 128, 128, 0.1)'
                                     }
                                 }
                             }
@@ -4857,8 +4988,8 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderColor: 'rgba(147, 51, 234, 1)',
                                     borderWidth: 1,
                                     callbacks: {
@@ -4888,7 +5019,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -4902,7 +5033,7 @@
                                     ticks: {
                                         maxRotation: 0,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -5000,7 +5131,7 @@
                                     display: true,
                                     position: 'top',
                                     labels: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 12
                                         }
@@ -5008,8 +5139,8 @@
                                 },
                                 tooltip: {
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: 'white',
-                                    bodyColor: 'white',
+                                    titleColor: getThemeColors().chartText,
+                                    bodyColor: getThemeColors().chartText,
                                     borderWidth: 1,
                                     callbacks: {
                                         label: function(context) {
@@ -5042,7 +5173,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -5057,7 +5188,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: {
                                             size: 11
                                         }
@@ -5123,14 +5254,14 @@
                                         callback: function(value) {
                                             return value + '%';
                                         },
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 },
                                 x: {
                                     grid: { color: 'rgba(128, 128, 128, 0.1)' },
                                     ticks: {
-                                        color: getThemeColors().textPrimary,
+                                        color: getThemeColors().chartText,
                                         font: { size: 11 }
                                     }
                                 }
