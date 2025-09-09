@@ -795,8 +795,9 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
                                     <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Daily Win Rate</h3>
-                                    <div class="relative h-64">
-                                    <canvas id="dailyWinRateChart"></canvas>
+                                    <div class="relative h-64" style="min-height: 256px;">
+                                    <canvas id="dailyWinRateChart" style="display: block; width: 100%; height: 100%;"></canvas>
+                                    <div id="dailyWinRateMessage" class="hidden absolute inset-0 flex items-center justify-center" style="color: var(--text-muted);">Loading chart...</div>
                                     </div>
                                 </div>
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
@@ -1796,6 +1797,17 @@
              return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value || 0);
         };
 
+        // Get theme-aware colors for charts
+        const getThemeColors = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            return {
+                textPrimary: isDark ? '#ffffff' : '#212529',
+                textSecondary: isDark ? '#d1d5db' : '#2c333a',
+                textMuted: isDark ? '#d1d5db' : '#3e444a',
+                gridColor: 'rgba(128, 128, 128, 0.1)'
+            };
+        };
+
         // Format amount based on display mode
         const formatAmount = (value) => {
             if (amountDisplayMode === 'full') {
@@ -2586,7 +2598,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium" style="color: var(--text-secondary);">TOTAL P&L</p>
-                                    <p class="text-2xl font-bold ${totalPnl >= 0 ? 'text-green-500' : 'text-red-500'}">${formatAmount(totalPnl)}</p>
+                                    <p class="text-2xl font-bold ${totalPnl >= 0 ? 'text-green-500' : 'text-red-500'}">${formatCurrency(totalPnl)}</p>
                                 </div>
                                 <div class="p-3 rounded-full ${totalPnl >= 0 ? 'bg-green-100' : 'bg-red-100'}">
                                     <i data-feather="${totalPnl >= 0 ? 'trending-up' : 'trending-down'}" class="h-6 w-6 ${totalPnl >= 0 ? 'text-green-600' : 'text-red-600'}"></i>
@@ -2677,7 +2689,7 @@
                                 }
                             });
                             
-                            const amount = pnl ? formatAmount(pnl) : '';
+                            const amount = pnl ? formatCurrency(pnl) : '';
                             const countLine = tCount ? `<div class="text-[11px] mt-1" style="color: var(--text-secondary);">${tCount} ${tCount===1?'trade':'trades'}</div>` : '';
                             cell.innerHTML = `
                                 <div class="flex items-center justify-between">
@@ -2715,7 +2727,7 @@
                     weekBox.style.backgroundColor = 'var(--bg-primary)';
                     weekBox.style.borderColor = 'var(--border-color)';
                     const label = `Week ${w+1}`;
-                    const amt = weekPnl ? formatAmount(weekPnl) : '—';
+                    const amt = weekPnl ? formatCurrency(weekPnl) : '—';
                     const amtColor = weekPnl>=0 ? 'text-green-600' : 'text-red-600';
                     weekBox.innerHTML = `
                         <div class="text-xs" style="color: var(--text-secondary);">${label}</div>
@@ -2726,7 +2738,7 @@
                 }
 
                 if (monthlyPnlDisplay) {
-                    monthlyPnlDisplay.textContent = `Monthly P&L: ${formatAmount(monthlyPnl)}`;
+                    monthlyPnlDisplay.textContent = `Monthly P&L: ${formatCurrency(monthlyPnl)}`;
                 }
                 const prevBtn = document.getElementById('prev-month-btn');
                 const nextBtn = document.getElementById('next-month-btn');
@@ -3386,7 +3398,7 @@
                                         color: 'rgba(128, 128, 128, 0.1)'
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)'
+                                        color: getThemeColors().textPrimary
                                     }
                                 },
                                 x: {
@@ -3394,7 +3406,7 @@
                                         color: 'rgba(128, 128, 128, 0.1)'
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)'
+                                        color: getThemeColors().textPrimary
                                     }
                                 }
                             }
@@ -3467,7 +3479,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 },
@@ -3476,7 +3488,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 }
@@ -3658,7 +3670,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0});
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         },
@@ -3671,7 +3683,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         },
@@ -3811,7 +3823,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -3823,7 +3835,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         },
@@ -3936,7 +3948,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 },
@@ -3948,7 +3960,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 }
@@ -4060,7 +4072,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4074,7 +4086,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4185,7 +4197,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4199,7 +4211,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4247,6 +4259,7 @@
                                         labels: {
                                             usePointStyle: true,
                                             padding: 20,
+                                            color: getThemeColors().textPrimary,
                                             font: {
                                                 size: 12
                                             }
@@ -4283,6 +4296,7 @@
                                         labels: {
                                             usePointStyle: true,
                                             padding: 20,
+                                            color: getThemeColors().textPrimary,
                                             font: {
                                                 size: 12
                                             }
@@ -4400,7 +4414,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4412,7 +4426,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4507,7 +4521,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         },
@@ -4520,7 +4534,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4533,9 +4547,16 @@
                 }
                 // Daily Win Rate vs Average Win Rate Chart
                 const dailyWinRateCtx = getCtx('dailyWinRateChart');
+                const dailyWinRateMessage = document.getElementById('dailyWinRateMessage');
                 if (dailyWinRateCtx) {
                     if (chartInstances['dailyWinRateChart']) {
                         chartInstances['dailyWinRateChart'].destroy();
+                    }
+                    
+                    // Show loading message
+                    if (dailyWinRateMessage) {
+                        dailyWinRateMessage.classList.remove('hidden');
+                        dailyWinRateMessage.textContent = 'Loading chart...';
                     }
                     
                     console.log('Creating Daily Win Rate Chart with closedTrades:', closedTrades.length);
@@ -4639,10 +4660,23 @@
                     
                     console.log('Creating Daily Win Rate Chart with data:', {
                         labels: chartLabels,
-                        dailyWinRateData: dailyWinRateData
+                        dailyWinRateData: dailyWinRateData,
+                        labelsLength: chartLabels.length,
+                        dataLength: dailyWinRateData.length
                     });
                     
-                    const dailyWinRateChart = new Chart(dailyWinRateCtx, {
+                    // Ensure we have data to display
+                    if (chartLabels.length === 0 || dailyWinRateData.length === 0) {
+                        console.error('Daily Win Rate Chart: No data to display');
+                        if (dailyWinRateMessage) {
+                            dailyWinRateMessage.textContent = 'No data available';
+                            dailyWinRateMessage.classList.remove('hidden');
+                        }
+                        return;
+                    }
+                    
+                    try {
+                        const dailyWinRateChart = new Chart(dailyWinRateCtx, {
                         type: 'line',
                         data: {
                             labels: chartLabels,
@@ -4671,7 +4705,7 @@
                                     labels: {
                                         usePointStyle: true,
                                         padding: 20,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 12
                                         }
@@ -4711,7 +4745,7 @@
                                         callback: function(value) {
                                             return value.toFixed(0) + '%';
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4723,7 +4757,7 @@
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         },
@@ -4750,9 +4784,23 @@
                                 }
                             }
                         }
-                    });
-                    chartInstances['dailyWinRateChart'] = dailyWinRateChart;
-                    console.log('Daily Win Rate Chart created successfully:', dailyWinRateChart);
+                        });
+                        chartInstances['dailyWinRateChart'] = dailyWinRateChart;
+                        console.log('Daily Win Rate Chart created successfully:', dailyWinRateChart);
+                        
+                        // Hide loading message on success
+                        if (dailyWinRateMessage) {
+                            dailyWinRateMessage.classList.add('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Error creating Daily Win Rate Chart:', error);
+                        
+                        // Show error message
+                        if (dailyWinRateMessage) {
+                            dailyWinRateMessage.textContent = 'Error loading chart';
+                            dailyWinRateMessage.classList.remove('hidden');
+                        }
+                    }
                 } else {
                     console.log('Daily Win Rate Chart canvas not found - canvas element missing');
                 }
@@ -4840,7 +4888,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4854,7 +4902,7 @@
                                     ticks: {
                                         maxRotation: 0,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -4952,7 +5000,7 @@
                                     display: true,
                                     position: 'top',
                                     labels: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 12
                                         }
@@ -4994,7 +5042,7 @@
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -5009,7 +5057,7 @@
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: {
                                             size: 11
                                         }
@@ -5075,14 +5123,14 @@
                                         callback: function(value) {
                                             return value + '%';
                                         },
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 },
                                 x: {
                                     grid: { color: 'rgba(128, 128, 128, 0.1)' },
                                     ticks: {
-                                        color: 'var(--text-primary)',
+                                        color: getThemeColors().textPrimary,
                                         font: { size: 11 }
                                     }
                                 }
@@ -5541,4 +5589,6 @@
 
     </script>
 </body>
+</html>
+
 </html>
