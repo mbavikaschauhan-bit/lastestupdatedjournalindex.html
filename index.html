@@ -423,6 +423,14 @@
             text-overflow: ellipsis;
         }
         
+        /* Column-specific alignment */
+        .trades-table th:nth-child(1), .trades-table td:nth-child(1) { text-align: left; } /* Symbol */
+        .trades-table th:nth-child(2), .trades-table td:nth-child(2) { text-align: center; } /* Side */
+        .trades-table th:nth-child(3), .trades-table td:nth-child(3) { text-align: center; } /* Size */
+        .trades-table th:nth-child(4), .trades-table td:nth-child(4) { text-align: right; } /* Entry */
+        .trades-table th:nth-child(5), .trades-table td:nth-child(5) { text-align: right; } /* Exit */
+        .trades-table th:nth-child(6), .trades-table td:nth-child(6) { text-align: right; } /* P&L */
+        
         /* Responsive adjustments for smaller screens */
         @media (max-width: 640px) {
             .trade-details-modal {
@@ -436,12 +444,12 @@
                 font-size: 0.75rem;
             }
             
-            .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 20%; } /* Symbol */
-            .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 10%; } /* Side */
-            .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 10%; } /* Size */
-            .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 20%; } /* Entry */
-            .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 20%; } /* Exit */
-            .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 20%; } /* P&L */
+            .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 20%; text-align: left; } /* Symbol */
+            .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 10%; text-align: center; } /* Side */
+            .trades-table th:nth-child(3), .trades-table td:nth-child(3) { width: 10%; text-align: center; } /* Size */
+            .trades-table th:nth-child(4), .trades-table td:nth-child(4) { width: 20%; text-align: right; } /* Entry */
+            .trades-table th:nth-child(5), .trades-table td:nth-child(5) { width: 20%; text-align: right; } /* Exit */
+            .trades-table th:nth-child(6), .trades-table td:nth-child(6) { width: 20%; text-align: right; } /* P&L */
         }
         .trades-table th:nth-child(1), .trades-table td:nth-child(1) { width: 18%; } /* Symbol */
         .trades-table th:nth-child(2), .trades-table td:nth-child(2) { width: 12%; } /* Side */
@@ -706,7 +714,7 @@
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
                                     <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Equity Curve</h3>
-                                    <div class="relative h-64">
+                                    <div class="relative h-80">
                                     <canvas id="equityCurveChart"></canvas>
                                     </div>
                                 </div>
@@ -1017,7 +1025,7 @@
                                     <div id="monthly-pnl-display" class="font-semibold" style="color: var(--text-primary);">Monthly P&L: ₹0.00</div>
                                     <button id="amount-display-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors" 
                                             style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color);">
-                                        <i data-feather="hash" class="h-4 w-4"></i>
+                                        <i data-feather="toggle-left" class="h-4 w-4"></i>
                                         <span id="toggle-text">Full Amounts</span>
                                     </button>
                                 </div>
@@ -2752,10 +2760,10 @@
             const updateToggleText = () => {
                 if (amountDisplayMode === 'full') {
                     toggleText.textContent = 'Compact Amounts';
-                    toggleBtn.querySelector('i').setAttribute('data-feather', 'hash');
+                    toggleBtn.querySelector('i').setAttribute('data-feather', 'toggle-left');
                 } else {
                     toggleText.textContent = 'Full Amounts';
-                    toggleBtn.querySelector('i').setAttribute('data-feather', 'hash');
+                    toggleBtn.querySelector('i').setAttribute('data-feather', 'toggle-left');
                 }
                 feather.replace();
             };
@@ -2857,9 +2865,9 @@
                                     <span style="color: ${sideColor}; font-weight: 500;">${trade.direction || 'N/A'}</span>
                                 </td>
                                 <td class="px-4 py-2">${trade.quantity || 0}</td>
-                                <td class="px-4 py-2" style="text-align: right;">₹${(trade.entry_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
-                                <td class="px-4 py-2" style="text-align: right;">₹${(trade.exit_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
-                                <td class="px-4 py-2" style="color: ${pnlColor}; font-weight: 500; text-align: right;">
+                                <td class="px-4 py-2">₹${(trade.entry_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
+                                <td class="px-4 py-2">₹${(trade.exit_price || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
+                                <td class="px-4 py-2" style="color: ${pnlColor}; font-weight: 500;">
                                     ${pnl >= 0 ? '+' : ''}₹${Math.abs(pnl).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}
                                 </td>
                             </tr>
@@ -3375,7 +3383,7 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: {
-                                        color: 'rgba(128,128,128,0.2)'
+                                        color: 'var(--text-muted)'
                                     },
                                     ticks: {
                                         color: 'var(--text-primary)'
@@ -3383,7 +3391,7 @@
                                 },
                                 x: {
                                     grid: {
-                                        color: 'rgba(128,128,128,0.2)'
+                                        color: 'var(--text-muted)'
                                     },
                                     ticks: {
                                         color: 'var(--text-primary)'
@@ -3454,7 +3462,7 @@
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    grid: { color: 'rgba(128,128,128,0.2)' },
+                                    grid: { color: 'var(--text-muted)' },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
@@ -3464,7 +3472,7 @@
                                     }
                                 },
                                 x: {
-                                    grid: { color: 'rgba(128,128,128,0.2)' },
+                                    grid: { color: 'var(--text-muted)' },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
@@ -3612,7 +3620,15 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                aspectRatio: 2,
+                                aspectRatio: 1.5,
+                                layout: {
+                                    padding: {
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 10,
+                                        right: 10
+                                    }
+                                },
                             plugins: {
                                 legend: { display: false },
                                 tooltip: {
@@ -3635,22 +3651,23 @@
                                 y: {
                                     beginAtZero: false,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
-                                            return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                            return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0});
                                         },
                                         color: 'var(--text-primary)',
                                         font: {
                                             size: 11
-                                        }
+                                        },
+                                        maxTicksLimit: 6
                                     }
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -3659,7 +3676,8 @@
                                             size: 11
                                         },
                                         maxRotation: 45,
-                                        minRotation: 0
+                                        minRotation: 0,
+                                        maxTicksLimit: 8
                                     }
                                 }
                                 }
@@ -3786,7 +3804,7 @@
                                 y: {
                                     beginAtZero: false,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -3801,7 +3819,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -3911,7 +3929,7 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -3924,7 +3942,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4035,7 +4053,7 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4050,7 +4068,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4160,7 +4178,7 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4175,7 +4193,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4375,7 +4393,7 @@
                                 x: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4390,7 +4408,7 @@
                                 },
                                 y: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4485,7 +4503,7 @@
                                 x: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4498,7 +4516,7 @@
                                 },
                                 y: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4686,7 +4704,7 @@
                                     beginAtZero: true,
                                     max: 100,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4701,7 +4719,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4815,7 +4833,7 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4830,7 +4848,7 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4969,7 +4987,7 @@
                                     beginAtZero: true,
                                     stacked: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -4985,7 +5003,7 @@
                                 x: {
                                     stacked: true,
                                     grid: { 
-                                        color: 'rgba(128,128,128,0.2)',
+                                        color: 'var(--text-muted)',
                                         drawBorder: false
                                     },
                                     ticks: {
@@ -5052,15 +5070,21 @@
                                 y: {
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: { color: 'rgba(128,128,128,0.2)' },
+                                    grid: { color: 'var(--text-muted)' },
                                     ticks: {
                                         callback: function(value) {
                                             return value + '%';
-                                        }
+                                        },
+                                        color: 'var(--text-primary)',
+                                        font: { size: 11 }
                                     }
                                 },
                                 x: {
-                                    grid: { color: 'rgba(128,128,128,0.2)' }
+                                    grid: { color: 'var(--text-muted)' },
+                                    ticks: {
+                                        color: 'var(--text-primary)',
+                                        font: { size: 11 }
+                                    }
                                 }
                             }
                         }
