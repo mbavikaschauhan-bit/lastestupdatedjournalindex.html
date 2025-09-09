@@ -31,7 +31,7 @@
             --bg-tertiary: #404040;
             --text-primary: #ffffff; /* Brighter */
             --text-secondary: #d1d5db; /* Brighter */
-            --text-muted: #9ca3af; /* Brighter */
+            --text-muted: #d1d5db; /* Brighter for better contrast */
             --border-color: #555555;
             --shadow: rgba(0, 0, 0, 0.3);
             --accent-color: #00d4aa;
@@ -297,7 +297,7 @@
             min-width: 320px;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            color: #e5e7eb; /* Default text color for dark modal */
+            color: var(--text-primary); /* Default text color for dark modal */
             background-color: #1e293b; /* Dark background from image */
         }
         
@@ -361,7 +361,7 @@
             cursor: pointer;
             line-height: 1;
             padding: 4px;
-            color: #94a3b8;
+            color: var(--text-muted);
         }
 
         .trade-details-modal .modal-content {
@@ -390,7 +390,7 @@
 
         .stat-card-label {
             font-size: 0.875rem;
-            color: #94a3b8; /* Muted text color from image */
+            color: var(--text-muted); /* Muted text color from image */
         }
         [data-theme="light"] .stat-card-label { color: var(--text-muted); }
 
@@ -455,7 +455,7 @@
         [data-theme="light"] .trades-table thead { border-bottom-color: var(--border-color); }
         
         .trades-table th {
-            color: #94a3b8;
+            color: var(--text-muted);
             font-weight: 500;
             text-transform: uppercase;
         }
@@ -786,7 +786,7 @@
                             <!-- Daily Win Rate vs Average Win Rate and Trade Distribution by Day of the Week Side by Side -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Daily Win Rate vs Average Win Rate</h3>
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Daily Win Rate</h3>
                                     <div class="relative h-64">
                                     <canvas id="dailyWinRateChart"></canvas>
                                     </div>
@@ -1473,7 +1473,7 @@
              <div class="modal-header flex justify-between items-center">
                 <div>
                     <h3 class="text-lg font-bold">Trading Details</h3>
-                    <p id="modal-date" class="text-sm" style="color: #94a3b8;"></p>
+                    <p id="modal-date" class="text-sm" style="color: var(--text-muted);"></p>
                 </div>
                 <button type="button" class="close-btn">&times;</button>
              </div>
@@ -4543,11 +4543,11 @@
                     const sortedDates = Array.from(allDates).sort();
                     
                     // If no trades, create sample data
-                    let chartLabels, dailyWinRateData, avgWinRateData, tooltipData;
+                    let chartLabels, dailyWinRateData, tooltipData;
                     
                     if (sortedDates.length === 0) {
                         console.log('No trades found, using sample data for Daily Win Rate Chart');
-                        // Sample data matching the image
+                        // Sample data for daily win rate only
                         chartLabels = [
                             '28-06-2024', '02-07-2024', '09-07-2024', '11-07-2024', '12-07-2024', 
                             '16-07-2024', '18-07-2024', '19-07-2024', '22-07-2024', '29-07-2024',
@@ -4556,7 +4556,6 @@
                             '20-08-2024', '21-08-2024', '28-08-2024', '29-08-2024', '30-08-2024'
                         ];
                         dailyWinRateData = [0, 0, 0, 100, 33.33, 100, 0, 66.67, 100, 0, 0, 0, 0, 50, 0, 66.67, 75, 0, 0, 100, 50, 0, 33.33, 50, 75];
-                        avgWinRateData = [0, 0, 0, 25, 26.67, 27.78, 27.78, 38.09, 41.67, 48.15, 43.33, 39.39, 36.36, 37.5, 35.29, 37.18, 39.29, 41.11, 43.23, 40.69, 38.43, 41.67, 42.08, 44.84, 42.8];
                         tooltipData = [
                             { dailyWins: 0, dailyTotal: 0, cumulativeWins: 0, cumulativeTotal: 0 },
                             { dailyWins: 0, dailyTotal: 0, cumulativeWins: 0, cumulativeTotal: 0 },
@@ -4589,11 +4588,7 @@
                         // Calculate actual win rates from trade data
                         chartLabels = sortedDates.map(date => formatDateDDMMYYYY(date));
                         dailyWinRateData = [];
-                        avgWinRateData = [];
                         tooltipData = [];
-                        
-                        let cumulativeWins = 0;
-                        let cumulativeTotal = 0;
                         
                         sortedDates.forEach(date => {
                             // Calculate daily trades for this date
@@ -4616,28 +4611,17 @@
                             // Calculate daily win rate
                             const dailyWinRate = dailyTotal > 0 ? (dailyWins / dailyTotal) * 100 : 0;
                             
-                            // Update cumulative counts
-                            cumulativeWins += dailyWins;
-                            cumulativeTotal += dailyTotal;
-                            
-                            // Calculate average win rate
-                            const avgWinRate = cumulativeTotal > 0 ? (cumulativeWins / cumulativeTotal) * 100 : 0;
-                            
                             dailyWinRateData.push(dailyWinRate);
-                            avgWinRateData.push(avgWinRate);
                             tooltipData.push({
                                 dailyWins,
-                                dailyTotal,
-                                cumulativeWins,
-                                cumulativeTotal
+                                dailyTotal
                             });
                         });
                     }
                     
                     console.log('Creating Daily Win Rate Chart with data:', {
                         labels: chartLabels,
-                        dailyWinRateData: dailyWinRateData,
-                        avgWinRateData: avgWinRateData
+                        dailyWinRateData: dailyWinRateData
                     });
                     
                     const dailyWinRateChart = new Chart(dailyWinRateCtx, {
@@ -4650,17 +4634,6 @@
                                     data: dailyWinRateData,
                                     borderColor: 'rgba(59, 130, 246, 1)', // Blue color
                                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                    borderWidth: 2,
-                                    fill: false,
-                                    tension: 0.4,
-                                    pointRadius: 4,
-                                    pointHoverRadius: 6
-                                },
-                                {
-                                    label: 'Average Win Rate',
-                                    data: avgWinRateData,
-                                    borderColor: 'rgba(34, 197, 94, 1)', // Green color
-                                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
                                     borderWidth: 2,
                                     fill: false,
                                     tension: 0.4,
@@ -4699,20 +4672,11 @@
                                         label: function(context) {
                                             const index = context.dataIndex;
                                             const data = tooltipData[index];
-                                            const datasetLabel = context.dataset.label;
                                             
-                                            if (datasetLabel === 'Daily Win Rate') {
-                                                return [
-                                                    `Daily Win Rate: ${context.parsed.y.toFixed(2)}%`,
-                                                    `Daily Trades: ${data.dailyWins}/${data.dailyTotal}`
-                                                ];
-                                            } else if (datasetLabel === 'Average Win Rate') {
-                                                return [
-                                                    `Average Win Rate: ${context.parsed.y.toFixed(2)}%`,
-                                                    `Total Trades: ${data.cumulativeWins}/${data.cumulativeTotal}`
-                                                ];
-                                            }
-                                            return `${datasetLabel}: ${context.parsed.y.toFixed(2)}%`;
+                                            return [
+                                                `Daily Win Rate: ${context.parsed.y.toFixed(2)}%`,
+                                                `Daily Trades: ${data.dailyWins}/${data.dailyTotal}`
+                                            ];
                                         }
                                     }
                                 }
