@@ -677,12 +677,12 @@
                                 </div>
                             </div>
                             
-                            <!-- Daily Win Rate vs Average Win Rate and Top Trades Side by Side -->
+                            <!-- Equity Curve and Top Trades Side by Side -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Daily Win Rate vs Average Win Rate</h3>
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Equity Curve</h3>
                                     <div class="relative h-64">
-                                    <canvas id="dailyWinRateChart"></canvas>
+                                    <canvas id="equityCurveChart"></canvas>
                                     </div>
                                 </div>
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
@@ -710,11 +710,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- P&L by Trading Style and P&L by Segment Side by Side -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Equity Curve</h3>
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">P&L by Trading Style</h3>
                                     <div class="relative h-64">
-                                    <canvas id="equityCurveChart"></canvas>
+                                    <canvas id="pnlByTradingStyleChart"></canvas>
                                     </div>
                                 </div>
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
@@ -723,34 +724,14 @@
                                     <canvas id="pnlBySegmentChart"></canvas>
                                     </div>
                                 </div>
-                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">P&L by Trading Style</h3>
-                                    <div class="relative h-64">
-                                    <canvas id="pnlByTradingStyleChart"></canvas>
-                                    </div>
-                                </div>
                             </div>
+                            <!-- Win/Loss Distribution and Strategy vs P&L Side by Side -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
                                     <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Win/Loss Distribution</h3>
                                     <div class="h-64 flex items-center justify-center relative">
                                         <canvas id="winLossDistributionChart"></canvas>
                                         <p id="winLossMessage" class="hidden absolute text-center" style="color: var(--text-muted);">No trades yet</p>
-                                    </div>
-                                </div>
-                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Performance by Day of Week</h3>
-                                    <div class="relative h-64">
-                                    <canvas id="performanceByDayChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
-                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Monthly Commission/Charges</h3>
-                                    <div class="relative h-64">
-                                    <canvas id="monthlyChargesChart"></canvas>
                                     </div>
                                 </div>
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
@@ -761,7 +742,30 @@
                                 </div>
                             </div>
 
+                            <!-- Monthly Commission/Charges and Performance by Day of Week Side by Side -->
                             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Monthly Commission/Charges</h3>
+                                    <div class="relative h-64">
+                                    <canvas id="monthlyChargesChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Performance by Day of Week</h3>
+                                    <div class="relative h-64">
+                                    <canvas id="performanceByDayChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Daily Win Rate vs Average Win Rate and Trade Distribution by Day of the Week Side by Side -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
+                                    <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Daily Win Rate vs Average Win Rate</h3>
+                                    <div class="relative h-64">
+                                    <canvas id="dailyWinRateChart"></canvas>
+                                    </div>
+                                </div>
                                 <div class="p-6 rounded-lg shadow-sm" style="background-color: var(--bg-primary); border: 1px solid var(--border-color);">
                                     <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Trade Distribution by Day of the Week</h3>
                                     <div class="relative h-64">
@@ -3346,12 +3350,18 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: {
-                                        color: 'rgba(255,255,255,0.1)'
+                                        color: 'rgba(128,128,128,0.2)'
+                                    },
+                                    ticks: {
+                                        color: 'var(--text-secondary)'
                                     }
                                 },
                                 x: {
                                     grid: {
-                                        color: 'rgba(255,255,255,0.1)'
+                                        color: 'rgba(128,128,128,0.2)'
+                                    },
+                                    ticks: {
+                                        color: 'var(--text-secondary)'
                                     }
                                 }
                             }
@@ -3419,21 +3429,21 @@
                             scales: {
                                 y: {
                                     beginAtZero: true,
-                                    grid: { color: 'rgba(255,255,255,0.1)' },
+                                    grid: { color: 'rgba(128,128,128,0.2)' },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: { size: 11 }
                                     }
                                 },
                                 x: {
-                                    grid: { color: 'rgba(255,255,255,0.1)' },
+                                    grid: { color: 'rgba(128,128,128,0.2)' },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: { size: 11 }
                                     }
                                 }
@@ -3600,14 +3610,14 @@
                                 y: {
                                     beginAtZero: false,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -3615,11 +3625,11 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         },
@@ -3751,14 +3761,14 @@
                                 y: {
                                     beginAtZero: false,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -3766,11 +3776,11 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         },
@@ -3876,26 +3886,26 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: { size: 11 }
                                     }
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: { size: 11 }
                                     }
                                 }
@@ -4000,14 +4010,14 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4015,13 +4025,13 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4125,14 +4135,14 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4140,13 +4150,13 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4340,14 +4350,14 @@
                                 x: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4355,11 +4365,11 @@
                                 },
                                 y: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4450,11 +4460,11 @@
                                 x: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         },
@@ -4463,11 +4473,11 @@
                                 },
                                 y: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4512,11 +4522,11 @@
                     if (sortedDates.length === 0) {
                         // Sample data matching the image
                         chartLabels = [
-                            '2024-06-28', '2024-07-02', '2024-07-09', '2024-07-11', '2024-07-12', 
-                            '2024-07-16', '2024-07-18', '2024-07-19', '2024-07-22', '2024-07-29',
-                            '2024-07-30', '2024-07-31', '2024-08-06', '2024-08-07', '2024-08-09',
-                            '2024-08-12', '2024-08-13', '2024-08-14', '2024-08-15', '2024-08-16',
-                            '2024-08-20', '2024-08-21', '2024-08-28', '2024-08-29', '2024-08-30'
+                            '28-06-2024', '02-07-2024', '09-07-2024', '11-07-2024', '12-07-2024', 
+                            '16-07-2024', '18-07-2024', '19-07-2024', '22-07-2024', '29-07-2024',
+                            '30-07-2024', '31-07-2024', '06-08-2024', '07-08-2024', '09-08-2024',
+                            '12-08-2024', '13-08-2024', '14-08-2024', '15-08-2024', '16-08-2024',
+                            '20-08-2024', '21-08-2024', '28-08-2024', '29-08-2024', '30-08-2024'
                         ];
                         dailyWinRateData = [0, 0, 0, 100, 33.33, 100, 0, 66.67, 100, 0, 0, 0, 0, 50, 0, 66.67, 75, 0, 0, 100, 50, 0, 33.33, 50, 75];
                         avgWinRateData = [0, 0, 0, 25, 26.67, 27.78, 27.78, 38.09, 41.67, 48.15, 43.33, 39.39, 36.36, 37.5, 35.29, 37.18, 39.29, 41.11, 43.23, 40.69, 38.43, 41.67, 42.08, 44.84, 42.8];
@@ -4549,7 +4559,7 @@
                         ];
                     } else {
                         // Calculate actual win rates from trade data
-                        chartLabels = sortedDates;
+                        chartLabels = sortedDates.map(date => formatDateDDMMYYYY(date));
                         dailyWinRateData = [];
                         avgWinRateData = [];
                         tooltipData = [];
@@ -4636,6 +4646,7 @@
                                     labels: {
                                         usePointStyle: true,
                                         padding: 20,
+                                        color: 'var(--text-primary)',
                                         font: {
                                             size: 12
                                         }
@@ -4677,14 +4688,14 @@
                                     beginAtZero: true,
                                     max: 100,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return value.toFixed(0) + '%';
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4692,11 +4703,11 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         },
@@ -4705,7 +4716,11 @@
                                         callback: function(value, index, ticks) {
                                             const label = this.getLabelForValue(value);
                                             if (label) {
-                                                // Format date to remove time information
+                                                // If label is already in DD-MM-YYYY format, return as is
+                                                if (label.includes('-') && label.split('-').length === 3) {
+                                                    return label;
+                                                }
+                                                // Otherwise, format date
                                                 const date = new Date(label);
                                                 return date.toLocaleDateString('en-IN', { 
                                                     day: '2-digit', 
@@ -4802,14 +4817,14 @@
                                 y: {
                                     beginAtZero: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4817,13 +4832,13 @@
                                 },
                                 x: {
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         maxRotation: 0,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4921,7 +4936,7 @@
                                     display: true,
                                     position: 'top',
                                     labels: {
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 12
                                         }
@@ -4956,14 +4971,14 @@
                                     beginAtZero: true,
                                     stacked: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         callback: function(value) {
                                             return '₹' + value.toLocaleString();
                                         },
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -4972,13 +4987,13 @@
                                 x: {
                                     stacked: true,
                                     grid: { 
-                                        color: 'rgba(255,255,255,0.1)',
+                                        color: 'rgba(128,128,128,0.2)',
                                         drawBorder: false
                                     },
                                     ticks: {
                                         maxRotation: 45,
                                         minRotation: 0,
-                                        color: 'rgba(255,255,255,0.8)',
+                                        color: 'var(--text-secondary)',
                                         font: {
                                             size: 11
                                         }
@@ -5039,7 +5054,7 @@
                                 y: {
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: { color: 'rgba(255,255,255,0.1)' },
+                                    grid: { color: 'rgba(128,128,128,0.2)' },
                                     ticks: {
                                         callback: function(value) {
                                             return value + '%';
@@ -5047,7 +5062,7 @@
                                     }
                                 },
                                 x: {
-                                    grid: { color: 'rgba(255,255,255,0.1)' }
+                                    grid: { color: 'rgba(128,128,128,0.2)' }
                                 }
                             }
                         }
